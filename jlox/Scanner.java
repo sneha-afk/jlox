@@ -87,6 +87,21 @@ public class Scanner {
                 if (match('/')) {
                     // Comment goes on until the end of the line; we don't care about these tokens
                     while (peek() != '\n' && !isAtEnd()) advance();
+                } else if (match('*')) { // Challenge 4: multiline comment support
+                    // Continue advancing until a */ is found
+                    boolean terminated = false;
+                    while (!isAtEnd()) {
+                        char c2 = advance();
+                        if (c2 == '*') {
+                            if (peek() == '/') {
+                                advance();
+                                terminated = true;
+                                break;
+                            }
+                        } else if (c2 == '\n') line++;
+                    }
+
+                    if (!terminated) Lox.error(line, "Unexpected comment.");
                 } else {
                     addToken(SLASH);
                 }
